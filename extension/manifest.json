@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Email Scam Detector",
+  "version": "1.0",
+  "description": "Detects scam content in emails using Groq's AI.",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": [
+    "https://mail.google.com/*",
+    "https://outlook.live.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Scan Email for Scam"
+  },
+  "icons": {
+    "128": "icons/icon.png"
+  }
+}
