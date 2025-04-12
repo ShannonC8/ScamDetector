@@ -3,11 +3,45 @@ from flask_cors import CORS
 import openai
 import os
 import re
+import firebase_admin
+from firebase_admin import credentials, auth, firestore
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 openai.api_key = os.environ.get("OPENAI_API_KEY")
+
+cred = credentials.Certificate("firebase-cred.json")
+firebase_admin.initialize_app(cred)
+
+db = firestore.client()
+
+@app.route("/api/register", methods=["POST"])
+def register():
+    data = request.json
+    email = data.get("email")
+    name = data.get("name")
+    photo = data.get("picture")
+
+    users_ref = db.collection('users')
+    user_doc = users_ref.document(email).get()
+
+    if not user_doc.exists:
+        users_ref.document(email).set({
+            'name': name,
+            'email': email,
+            'photo': photo
+        })
+
+    return jsonify({
+        "status": "success",
+        "email": email,
+        "name": name,
+        "photo": photo
+    })
+
+
+
 
 @app.route("/analyze", methods=["POST"])
 def analyze_email():

@@ -3,16 +3,23 @@
 <head>
   <title>Email Scam Detector</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 10px; }
-    pre { margin-top: 15px; white-space: pre-wrap; word-wrap: break-word; }
+    body { font-family: Arial, sans-serif; padding: 10px; text-align: center; }
+    #welcome { display: none; }
   </style>
 </head>
 <body>
-  <h2>Email Content</h2>
-  <pre id="result">Scanning...</pre>
+  <div id="login">
+    <h2>Login</h2>
+    <button id="loginBtn">Sign in with Google</button>
+  </div>
+
+  <div id="welcome">
+    <h2>Welcome!</h2>
+    <p id="email"></p>
+    <a href="https://yourwebsite.com" target="_blank">Go to Dashboard</a>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
   <script src="popup.js"></script>
 </body>
 </html>
-
-
-

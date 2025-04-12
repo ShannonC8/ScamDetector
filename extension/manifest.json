@@ -3,10 +3,12 @@
   "name": "Email Scam Detector",
   "version": "1.0",
   "description": "Detects scam content in emails.",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["identity", "storage", "activeTab", "scripting"],
   "host_permissions": [
     "https://mail.google.com/*",
-    "https://outlook.live.com/*"
+    "https://outlook.live.com/*",
+    "https://accounts.google.com/*",
+    "https://www.googleapis.com/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -21,6 +23,13 @@
       "run_at": "document_idle"
     }
   ],
+
+  "oauth2": {
+  "client_id": "32267406597-sfbj12ru7iftmft356e1sd8tbp4ov3fc.apps.googleusercontent.com", 
+  "scopes": ["email", "profile", "openid"]
+  },
+  
+
   "action": {
     "default_popup": "popup.html",
     "default_title": "Scan Email for Scam"
