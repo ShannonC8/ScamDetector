@@ -101,8 +101,16 @@
     }
   
     async function tryInject(attempts = 0) {
-      const emailContainer = document.querySelector('[role="main"]');
-      if (emailContainer && emailContainer.innerText.length > 50) {
+      const selectors = [
+        '[role="main"]',                    // Gmail
+        '.readingPane',                     // Outlook Web (reading pane)
+        'div[data-message-id]',             // Outlook message body
+        '[data-test-id="message-view-body-content"]', // Sometimes used in Outlook
+      ];
+
+      const emailContainer = selectors.map(sel => document.querySelector(sel)).find(el => el && el.innerText && el.innerText.length > 50);
+
+      if (emailContainer) {
         const emailText = emailContainer.innerText;
   
         try {
