@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Email Scam Detector</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 10px; text-align: center; }
-    #welcome { display: none; }
-  </style>
+  <title>Phishnet - Email Scam Detector</title>
+  <link rel="stylesheet" href="popup.css">
 </head>
 <body>
+  <header>
+    <h1 class="brand">Phishnet</h1>
+    <p class="tagline">Catch scams before they catch you</p>
+  </header>
+
   <div id="login">
     <h2>Login</h2>
     <button id="loginBtn">Sign in with Google</button>
@@ -17,6 +19,7 @@
     <h2>Welcome!</h2>
     <p id="email"></p>
     <a href="https://yourwebsite.com" target="_blank">Go to Dashboard</a>
+    <div></div>
     <button id="logoutBtn">Logout</button>
   </div>
 

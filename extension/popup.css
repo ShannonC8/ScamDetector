@@ -1,0 +1,83 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 350px;
+    height: 400px;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fefaf6; /* light peach */
+    color: #333;
+    text-align: center;
+  }
+  
+  h2 {
+    color: #007acc; /* light blue */
+    margin-bottom: 12px;
+    font-size: 22px;
+  }
+  
+  button {
+    background-color: #ff914d; /* soft orange */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  button:hover {
+    background-color: #ff7a26;
+  }
+  
+  a {
+    display: inline-block;
+    margin-top: 16px;
+    text-decoration: none;
+    color: #007acc;
+    font-weight: 500;
+    font-size: 15px;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  #welcome, #login {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    padding: 32px 20px;
+    margin: 40px 20px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  p#email {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #444;
+    word-break: break-word;
+  }
+  
+  header {
+    margin-bottom: 20px;
+  }
+  
+  .brand {
+    margin: 0;
+    font-size: 26px;
+    color: #007acc;
+    font-weight: 700;
+  }
+  
+  .tagline {
+    font-size: 13px;
+    color: #888;
+    margin-top: 4px;
+    margin-bottom: 20px;
+  }
+  
