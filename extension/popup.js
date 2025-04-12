@@ -4,6 +4,16 @@ document.getElementById('loginBtn')?.addEventListener('click', () => {
       // After sending login message, immediately show a loading message
       document.getElementById('loginBtn').textContent = 'Signing in...';
       document.getElementById('loginBtn').disabled = true;
+
+      // Periodically check for login completion and refresh UI
+      const checkInterval = setInterval(() => {
+        chrome.storage.local.get(['email'], (result) => {
+          if (result.email) {
+            clearInterval(checkInterval);
+            refreshUI();
+          }
+        });
+      }, 500); // check every 500ms
     });
   });
   
