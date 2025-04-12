@@ -7,10 +7,11 @@
     }
   
     function getRiskColor(score) {
-      if (score >= 80) return 'rgba(255, 0, 0, 0.85)'; // red
-      if (score >= 50) return 'rgba(255, 165, 0, 0.85)'; // orange
-      if (score >= 20) return 'rgba(255, 255, 0, 0.85)'; // yellow
-      return 'rgba(0, 128, 0, 0.85)'; // green
+      score = parseInt(score);
+      if (score >= 80) return 'rgba(255, 0, 0, 0.85)';
+      if (score >= 50) return 'rgba(255, 165, 0, 0.85)';
+      if (score >= 20) return 'rgba(255, 255, 0, 0.85)';
+      return 'rgba(0, 128, 0, 0.85)';
     }
   
     function injectPanel(score) {
@@ -37,7 +38,7 @@
       panel.style.gap = '12px';
   
       const label = document.createElement('div');
-      label.innerText = score >= 80 ? '⚠️ High Scam Risk – we think this is a scam' : score >= 50 ? '⚠️ Moderate Risk' : score >= 20 ? '⚠️ Low Risk' : '✅ Safe';
+      label.innerText = `📊 Scam Score: ${score}/100`;
       label.style.flex = '1';
   
       const closeBtn = document.createElement('button');
@@ -47,7 +48,9 @@
       closeBtn.style.color = 'white';
       closeBtn.style.fontSize = '18px';
       closeBtn.style.cursor = 'pointer';
-      closeBtn.addEventListener('click', () => panel.remove());
+      closeBtn.addEventListener('click', () => {
+        panel.remove();
+      });
   
       panel.appendChild(label);
       panel.appendChild(closeBtn);
@@ -55,24 +58,39 @@
       log('Panel injected with score:', score);
     }
   
+    async function tryInject(attempts = 0) {
+        const emailContainer = document.querySelector('[role="main"]');
+        if (emailContainer && emailContainer.innerText.length > 50) {
+          const emailText = emailContainer.innerText;
+          console.log("[ScamDetector] Email body:\n\n", emailText);  // 👈 FULL BODY PRINT
+      
+          let score = 50; // fallback score
+      
+          try {
+            const res = await fetch('http://127.0.0.1:5000/analyze', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ emailText })
+            });
+            const data = await res.json();
+            console.log('[ScamDetector] GPT response:', data);
+            score = parseInt(data.result);
+          } catch (err) {
+            console.error('[ScamDetector] Analysis failed:', err);
+          }
+      
+          injectPanel(score);
+        } else if (attempts < 10) {
+          setTimeout(() => tryInject(attempts + 1), 500);
+        } else {
+          console.warn('[ScamDetector] Email content not found.');
+        }
+      }
+      
+  
     function removePanel() {
       const existing = document.getElementById('scam-detector-panel');
-      if (existing) {
-        existing.remove();
-        log('Panel removed.');
-      }
-    }
-  
-    function tryInject(attempts = 0) {
-      const emailText = document.querySelector('[role="main"]')?.innerText;
-      if (emailText && emailText.length > 50) {
-        const riskScore = 100;
-        injectPanel(riskScore);
-      } else if (attempts < 10) {
-        setTimeout(() => tryInject(attempts + 1), 500);
-      } else {
-        log('Email content not found.');
-      }
+      if (existing) existing.remove();
     }
   
     setInterval(() => {
@@ -91,4 +109,3 @@
       tryInject();
     }
   })();
-  
