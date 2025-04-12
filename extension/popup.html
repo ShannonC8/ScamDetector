@@ -4,16 +4,12 @@
   <title>Email Scam Detector</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 10px; }
-    button { width: 100%; padding: 8px; margin-top: 10px; }
-    p { margin-top: 15px; font-weight: bold; }
+    pre { margin-top: 15px; white-space: pre-wrap; word-wrap: break-word; }
   </style>
 </head>
 <body>
-    
-  <h2>Scan Email</h2>
-  <button id="scanBtn">Scan Current Email</button>
-  <p id="result"></p>
-  <script type="module" src="popup.js"></script>
+  <h2>Email Content</h2>
+  <pre id="result">Scanning...</pre>
+  <script src="popup.js"></script>
 </body>
 </html>
-
