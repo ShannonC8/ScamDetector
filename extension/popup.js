@@ -20,15 +20,36 @@ document.getElementById('loginBtn')?.addEventListener('click', () => {
       }
     });
   }
+
+  function revokeToken(token) {
+    return fetch(`https://accounts.google.com/o/oauth2/revoke?token=${token}`)
+      .then(res => {
+        console.log('🔐 Token revoked:', res.status);
+      });
+  }
+  
   
   // Allow user to logout
   document.getElementById('logoutBtn')?.addEventListener('click', () => {
-    chrome.identity.clearAllCachedAuthTokens(() => {
-      chrome.storage.local.clear(() => {
-        refreshUI(); // Update UI after logout
-      });
+    chrome.identity.getAuthToken({ interactive: false }, (token) => {
+      if (token) {
+        revokeToken(token).finally(() => {
+          chrome.identity.clearAllCachedAuthTokens(() => {
+            chrome.storage.local.remove(['email', 'name', 'picture'], () => {
+              refreshUI();
+            });
+          });
+        });
+      } else {
+        // No token to revoke
+        chrome.storage.local.remove(['email', 'name', 'picture'], () => {
+          refreshUI();
+        });
+      }
     });
   });
+  
+  
   
   // Always update UI on load
   refreshUI();
