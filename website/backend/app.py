@@ -45,6 +45,7 @@ def register():
             'name': name,
             'email': email,
             'photo': photo,
+            'advice': "You have not had any scam emails detected yet",
             'scams_reported': 0,
             'scams_detected': 0,
             'emails_analyzed': 0,
@@ -150,7 +151,8 @@ def analyze_email():
     except Exception as e:
         print("⚠️ Could not fetch fine-tuned model ID. Using default:", e)
         model_name = 'gpt-3.5-turbo'
-
+   
+   
     messages = [
         {
             "role": "system",
@@ -183,27 +185,59 @@ def analyze_email():
         if not (score_match and reason_match and highlight_match):
             raise ValueError("Missing one or more response components")
 
+
         if email:
+            user_doc = db.collection("users").document(email).get()
+            data = user_doc.to_dict()
+            print(data)
+            prior_advice = data.get("advice", "")
+            advice_prompt = [
+                {
+                    "role": "system",
+                    "content": "You are a scam prevention assistant. Your job is to help the user identify patterns in scam emails they've received."
+                },
+                {
+                    "role": "user",
+                    "content": f"""
+                    The user just received the following scam email:
+                    {email_text}
+                    Here is their current scam prevention advice:
+                    "{prior_advice}"
+                    Please improve or rewrite the advice based on this new scam email, preserving any relevant earlier advice
+                    Start your sentence as "Some general advice for you based on common scams in your inbox are ...."
+                    """
+                }
+            ]
+
             timestamp = datetime.datetime.utcnow().isoformat()
             user_ref = db.collection('users').document(email)
             user_ref.update({
                 "emails_analyzed": firestore.Increment(1),
                 "analyze_timestamps": firestore.ArrayUnion([timestamp])
             })
-        if int(score_match.group(1)) < 30:
-            user_ref.update({
-                "not_scam": firestore.Increment(1),
-            })
-        elif int(score_match.group(1)) < 70:
-            user_ref.update({
-                "maybe_scam": firestore.Increment(1),
-            })
-        else:
-            user_ref.update({
-                "likely_scam": firestore.Increment(1),
-                "scams_detected": firestore.Increment(1),
-                "scam_history": firestore.ArrayUnion([timestamp])
-            })
+            
+            
+            if int(score_match.group(1)) < 30:
+                user_ref.update({
+                    "not_scam": firestore.Increment(1),
+                })
+            elif int(score_match.group(1)) < 70:
+                user_ref.update({
+                    "maybe_scam": firestore.Increment(1),
+                })
+            else:
+                response = client.chat.completions.create(
+                model=model_name,
+                messages= advice_prompt,
+                temperature=0.2
+                )
+                reply = response.choices[0].message.content.strip()
+                user_ref.update({
+                    "advice": reply,
+                    "likely_scam": firestore.Increment(1),
+                    "scams_detected": firestore.Increment(1),
+                    "scam_history": firestore.ArrayUnion([timestamp])
+                })
 
         return jsonify({
             "score": int(score_match.group(1)),

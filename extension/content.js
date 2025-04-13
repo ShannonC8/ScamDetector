@@ -4,6 +4,8 @@ chrome.storage.local.get(['email'], (result) => {
 
   let currentURL = location.href;
   let lastEmailText = '';
+  let lastCheckedURL = '';
+  let lastContent = '';
 
   const getEmailContainer = () => {
     // Gmail
@@ -17,12 +19,10 @@ chrome.storage.local.get(['email'], (result) => {
     return null;
   };
 
-  const isViewingEmail = () => !!getEmailContainer();
-
   const getBackgroundColor = (score) => {
-    if (score >= 80) return '#ffeaea';   // red
-    if (score >= 50) return '#fffbe6';   // yellow
-    return '#e7f7eb';                    // green
+    if (score >= 80) return '#ffeaea';
+    if (score >= 50) return '#fffbe6';
+    return '#e7f7eb';
   };
 
   const removePanel = () => {
@@ -33,42 +33,6 @@ chrome.storage.local.get(['email'], (result) => {
       parent.replaceChild(document.createTextNode(span.textContent), span);
       parent.normalize();
     });
-  };
-
-  const highlightText = (phrase) => {
-    const container = getEmailContainer();
-    if (!container || !phrase) return;
-
-    phrase = phrase.trim().replace(/^["']|["']$/g, '');
-    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
-    let node;
-
-    while ((node = walker.nextNode())) {
-      const index = node.nodeValue.indexOf(phrase);
-      if (index !== -1) {
-        const before = node.nodeValue.slice(0, index);
-        const after = node.nodeValue.slice(index + phrase.length);
-
-        const highlight = document.createElement('span');
-        highlight.className = 'scam-highlight';
-        Object.assign(highlight.style, {
-          backgroundColor: '#fff3b0',
-          color: '#222',
-          fontWeight: 'bold',
-          borderRadius: '4px',
-          padding: '0 3px'
-        });
-        highlight.textContent = phrase;
-
-        const fragment = document.createDocumentFragment();
-        fragment.appendChild(document.createTextNode(before));
-        fragment.appendChild(highlight);
-        fragment.appendChild(document.createTextNode(after));
-
-        node.parentNode.replaceChild(fragment, node);
-        break;
-      }
-    }
   };
 
   const injectPanel = (score, reason, highlight, emailText) => {
@@ -91,8 +55,7 @@ chrome.storage.local.get(['email'], (result) => {
       fontFamily: 'Arial, sans-serif',
       display: 'flex',
       flexDirection: 'column',
-      gap: '10px',
-      transition: 'all 0.3s ease-in-out'
+      gap: '10px'
     });
 
     panel.innerHTML = `
@@ -110,7 +73,6 @@ chrome.storage.local.get(['email'], (result) => {
 
     document.body.appendChild(panel);
 
-    // Report logic
     document.getElementById('close-btn').onclick = removePanel;
     document.getElementById('report-btn').onclick = () => {
       document.getElementById('report-btn').style.display = 'none';
@@ -118,10 +80,9 @@ chrome.storage.local.get(['email'], (result) => {
     };
 
     document.getElementById('submit-btn').onclick = () => {
-      const reasonVal = document.getElementById('reason').value.trim();
+      const reason = document.getElementById('reason').value.trim();
       const highlightVal = document.getElementById('highlight').value.trim();
-
-      if (!reasonVal || !highlightVal) return alert('Please fill in both fields.');
+      if (!reason || !highlightVal) return alert('Please fill in both fields.');
 
       fetch("http://127.0.0.1:5000/report", {
         method: "POST",
@@ -129,7 +90,7 @@ chrome.storage.local.get(['email'], (result) => {
         body: JSON.stringify({
           email: userEmail,
           emailText,
-          reason: reasonVal,
+          reason: reason,
           highlight: highlightVal
         })
       }).then(res => res.json()).then(data => {
@@ -141,8 +102,6 @@ chrome.storage.local.get(['email'], (result) => {
         alert('Failed to report.');
       });
     };
-
-    highlightText(highlight);
   };
 
   const tryInject = async () => {
@@ -150,7 +109,12 @@ chrome.storage.local.get(['email'], (result) => {
     if (!container) return;
 
     const emailText = container.innerText.trim();
-    if (!emailText || emailText === lastEmailText) return;
+    const newURL = location.href;
+
+    if (emailText === lastContent && newURL === lastCheckedURL) return;
+
+    lastContent = emailText;
+    lastCheckedURL = newURL;
 
     try {
       const res = await fetch("http://127.0.0.1:5000/analyze", {
@@ -166,20 +130,17 @@ chrome.storage.local.get(['email'], (result) => {
     }
   };
 
-  const monitorChanges = () => {
+  const monitor = () => {
+    const container = getEmailContainer();
+    if (!container) return removePanel();
+
     const newURL = location.href;
     if (newURL !== currentURL) {
       currentURL = newURL;
       removePanel();
-    }
-
-    if (isViewingEmail()) {
       tryInject();
-    } else {
-      removePanel();
     }
   };
 
-  setInterval(monitorChanges, 1000);
-  if (isViewingEmail()) tryInject();
+  setInterval(monitor, 1000);
 });
