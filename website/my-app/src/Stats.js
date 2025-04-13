@@ -32,7 +32,7 @@ const Stats = () => {
 
   if (loading) return <div className="stats-container">Loading stats...</div>;
   if (!user) return <div className="stats-container">No data found.</div>;
-
+  const advice = user.advice || "No advice available yet.";
   const analyzed = user.emails_analyzed || 0;
   const scams = user.scams_detected || 0;
   const reports = user.scams_reported || 0;
@@ -64,6 +64,15 @@ const Stats = () => {
     <div>
       <NavBar />
     <div className="stats-container">
+      <motion.div
+          className="advice-box"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h2>General Scam Advice</h2>
+          <p className="advice-text">{advice}</p>
+        </motion.div>
+
       <motion.h2 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         Scam Detection Dashboard
       </motion.h2>
@@ -75,7 +84,7 @@ const Stats = () => {
         <div className="card gray"><h3>{scamPercent}%</h3><p>Scam Percent</p></div>
       </motion.div>
 
-      <h3>Scam Classification Breakdown</h3>
+      <h3>Inbox Classification Breakdown</h3>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100}>

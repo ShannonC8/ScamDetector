@@ -3,6 +3,7 @@
     margin: 0px auto;
     padding: 20px;
     font-family: Arial, sans-serif;
+    text-align: center;
   }
 
 .quiz-title {
@@ -50,4 +51,18 @@
     font-weight: bold;
     font-size: 18px;
   }
+
+  .home-link {
+    text-decoration: none;
+    color: #000000;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .home-link:hover {
+    background-color: #cde4f5;
+  }
+  
   

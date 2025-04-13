@@ -26,19 +26,33 @@ body {
   
   .country-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10vh;
+    grid-template-columns: repeat(3, 1fr); /* Three boxes per row */
+    gap: 6vh;
     justify-items: center;
     align-items: center;
   }
+
+  @media screen and (max-width: 900px) {
+    .country-grid {
+      grid-template-columns: repeat(2, 1fr); /* Two columns for medium screens */
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .country-grid {
+      grid-template-columns: 1fr; /* One column for small screens */
+    }
+  }
+
+  
   
   .country-box {
     background: white;
     border-radius: 14px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
     padding: 24px 16px;
-    width: 15vw;
-    height: 20vh;
+    width: 20vw;
+    height: 25vh;
     text-decoration: none;
     color: #333;
     transition: all 0.25s ease-in-out;
