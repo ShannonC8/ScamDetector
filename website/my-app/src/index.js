@@ -7,6 +7,7 @@ import Home from './home';
 import Stats from './Stats';
 import ScamHelp from './ScamHelp/ScamHelp';
 import Contact from './Contact';
+import Quiz from './Quiz';
 
 import reportWebVitals from './reportWebVitals';
 
@@ -24,6 +25,7 @@ root.render(
         <Route path="/stats" element={<Stats />} />
         <Route path="/scamhelp" element={<ScamHelp />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/quiz" element={<Quiz />} />
       </Routes>
     </BrowserRouter>
   </GoogleOAuthProvider>,
