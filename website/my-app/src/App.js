@@ -1,6 +1,6 @@
 import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
-// import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import './App.css';
 import { useNavigate, Link } from "react-router-dom";
 
@@ -9,9 +9,13 @@ function App() {
 
   const handleLoginSuccess = (credentialResponse) => {
     const { credential } = credentialResponse;
-    // const userInfo = jwt_decode(credential);
-    // console.log("User Info:", userInfo);
+    const profile = jwtDecode(credential);
+    console.log("User Info:", profile);
+
     localStorage.setItem("token", credential);
+    localStorage.setItem("email", profile.email);
+    localStorage.setItem("name", profile.name);
+    localStorage.setItem("picture", profile.picture);
     navigate("/home");
   };
 

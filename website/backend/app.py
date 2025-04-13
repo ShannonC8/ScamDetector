@@ -18,6 +18,18 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
+
+@app.route("/api/stats")
+def get_stats():
+    email = request.args.get("email")
+    if not email:
+        return jsonify({"error": "Missing email"}), 400
+    doc = db.collection("users").document(email).get()
+    if not doc.exists:
+        return jsonify({"error": "User not found"}), 404
+    return jsonify(doc.to_dict())
+
+
 @app.route("/api/register", methods=["POST"])
 def register():
     data = request.json
@@ -36,6 +48,9 @@ def register():
             'scams_reported': 0,
             'scams_detected': 0,
             'emails_analyzed': 0,
+            'not_scam': 0,
+            'maybe_scam': 0,
+            'likely_scam': 0,
             'scam_history': [],
             'report_history': [],
             'analyze_timestamps': []
@@ -175,8 +190,17 @@ def analyze_email():
                 "emails_analyzed": firestore.Increment(1),
                 "analyze_timestamps": firestore.ArrayUnion([timestamp])
             })
-        if int(score_match.group(1)) > 70:
+        if int(score_match.group(1)) < 30:
             user_ref.update({
+                "not_scam": firestore.Increment(1),
+            })
+        elif int(score_match.group(1)) < 70:
+            user_ref.update({
+                "maybe_scam": firestore.Increment(1),
+            })
+        else:
+            user_ref.update({
+                "likely_scam": firestore.Increment(1),
                 "scams_detected": firestore.Increment(1),
                 "scam_history": firestore.ArrayUnion([timestamp])
             })
