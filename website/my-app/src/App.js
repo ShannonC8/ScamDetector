@@ -3,6 +3,7 @@ import { GoogleLogin } from "@react-oauth/google";
 // import jwt_decode from "jwt-decode";
 import './App.css';
 import { useNavigate, Link } from "react-router-dom";
+import phish from './assets/goldfish.gif'
 
 function App() {
   const navigate = useNavigate();
@@ -22,7 +23,9 @@ function App() {
   return (
     <div className="centerCard">
       <div className="card">
-        <p className="title">Sign In</p>
+        <p className="bigtitle">PhishNet</p>
+        <img className="phish" src={phish} alt="loading..." />
+        <p className="title2">Sign In</p>
         <GoogleLogin
           onSuccess={handleLoginSuccess}
           onError={handleLoginError}

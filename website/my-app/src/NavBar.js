@@ -6,7 +6,7 @@ function NavBar() {
   return (
     <nav className="navbar">
       <div className="nav-brand">
-        <Link to="/">🐟 PhishNet</Link>
+        <Link to="/home">🐟 PhishNet</Link>
       </div>
       <div className="nav-links">
         <Link to="/stats">Stats</Link>

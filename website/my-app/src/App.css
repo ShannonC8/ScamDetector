@@ -8,6 +8,10 @@
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+.title2 {
+  font-size: 1.5rem;
+}
+
 .centerCard {
   display: flex;
   justify-content: center;  /* Horizontal center */
@@ -15,6 +19,18 @@
   width: 100vw;
   height: 100vh;            /* Full viewport height */
   background-color: #cde4f5;
+}
+
+
+.phish{
+  width: 15vw;
+  height: 15vw;
+}
+
+.bigtitle{
+  font-size: 2.2rem;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
 }
 
 .card {
@@ -26,8 +42,8 @@
   justify-content: center;
   align-items: center;      /* Vertical center */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  width: 25%;
-  height: 25%;
+  width: 30%;
+  height: 60%;
 }
 
 input {
