@@ -5,18 +5,19 @@ body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
   }
   
-  .container {
+  .containerScam {
     max-width: 1000px;
     margin: 60px auto;
-    padding: 0 24px;
+    padding: 0 20px;
     text-align: center;
   }
   
-  /* .title {
-    font-size: 2.2rem;
-    margin-bottom: 10px;
+   .titlescam {
+    font-size: 2rem;
+    margin-top: 12vh;
   }
-   */
+  
+
   .subtitle {
     font-size: 1.2rem;
     color: #555;
@@ -25,8 +26,8 @@ body {
   
   .country-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 28px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10vh;
     justify-items: center;
     align-items: center;
   }
@@ -36,7 +37,7 @@ body {
     border-radius: 14px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
     padding: 24px 16px;
-    width: 20vw;
+    width: 15vw;
     height: 20vh;
     text-decoration: none;
     color: #333;

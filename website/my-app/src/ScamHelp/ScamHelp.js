@@ -32,7 +32,9 @@ export default function ScamHelp() {
   return (
     <div className="container">
       <NavBar />
-      <h1 className="title">Phishnet - What To Do If You've Been Scammed</h1>
+      <div className="containerScam">
+
+      <h1 className="titlescam">What To Do If You've Been Scammed</h1>
       <p className="subtitle">Choose your country for reporting and recovery information.</p>
 
       <div className="country-grid">
@@ -69,6 +71,7 @@ export default function ScamHelp() {
           <button className="close-btn" onClick={() => setOpen(false)}>Close</button>
         </div>
       </Popup>
+      </div>
     </div>
   );
 }
