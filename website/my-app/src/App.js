@@ -3,7 +3,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import './App.css';
 import { useNavigate, Link } from "react-router-dom";
-import phish from './assets/goldfish.gif'
+import phish from './assets/phish3.gif'
 
 function App() {
   const navigate = useNavigate();

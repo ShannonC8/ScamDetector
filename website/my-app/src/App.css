@@ -59,5 +59,7 @@ button {
   border-radius: 10px;
   padding: 1vw 1vw;
   outline: none;
-  margin: 5px;
+  font-weight: bold;
+  color: white;
+  background-color: #3083c4;
 }

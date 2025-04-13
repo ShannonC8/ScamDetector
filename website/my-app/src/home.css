@@ -1,0 +1,46 @@
+.contact-subtitle2 {
+    text-align: left;
+    font-size: 2rem;
+}
+
+.contact-title4 {
+    font-size: 4rem;
+    text-align: left;
+    color: #3083c4;
+
+}
+
+.welcome {
+    text-align: left;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    padding-left: 3vw;
+    /* space between buttons */
+    margin: 2rem 0;
+}
+
+.button-container button {
+    padding: 1.5vw 7vw;
+    /* increased horizontal padding */
+    font-size: 1.5rem;
+}
+
+/* .welcome-image img{
+    width: 20vw;
+    height: 20vw;
+}  */
+
+.welcome-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem;
+    padding-left: 15vw;
+    padding-right: 15vw;
+    padding-top: 8vw;
+    gap: 2rem;
+}
