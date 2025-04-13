@@ -61,8 +61,10 @@ const Stats = () => {
   const pieColors = ['#f44336', '#ff9800', '#4caf50'];
 
   return (
-    <div className="stats-container">
+    <div>
       <NavBar />
+    <div className="stats-container">
+      
       <motion.h2 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         Scam Detection Dashboard
       </motion.h2>
@@ -109,7 +111,7 @@ const Stats = () => {
         </LineChart>
       </ResponsiveContainer>
 
-      
+      </div>
     </div>
   );
 };
