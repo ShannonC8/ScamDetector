@@ -1,193 +1,278 @@
 chrome.storage.local.get(['email'], (result) => {
-  if (!result.email) {
-    console.log('[ScamDetector] User not logged in. Scam detection is disabled.');
+  const userEmail = result.email;
+  if (!userEmail) {
+    console.log('[ScamDetector] User not logged in.');
     return;
   }
 
-  (function () {
-    const log = (...args) => console.log('[ScamDetector]', ...args);
-    let currentURL = location.href;
+  let currentURL = location.href;
 
-    function isEmailView(url) {
-      return url.includes('#inbox/') || url.includes('#sent/') || (url.includes('/mail/') && url.includes('/id/'));
-    }
+  const log = (...args) => console.log('[ScamDetector]', ...args);
 
-    function getRiskColor(score) {
-      if (score >= 80) return 'rgba(255, 0, 0, 0.85)';
-      if (score >= 50) return 'rgba(255, 165, 0, 0.85)';
-      if (score >= 20) return 'rgba(255, 255, 0, 0.85)';
-      return 'rgba(0, 128, 0, 0.85)';
-    }
+  const isEmailView = (url) =>
+    url.includes('#inbox/') || url.includes('#sent/') || url.includes('/mail/');
 
-    function highlightText(phrase) {
-      const container = document.querySelector('.adn .a3s');
-      if (!container || !phrase) return;
+  const getBackgroundColor = (score) => {
+    if (score >= 80) return '#ffeaea';     // Light red
+    if (score >= 50) return '#fffbe6';     // Light yellow
+    return '#e7f7eb';                      // Light green
+  };
 
-      phrase = phrase.trim().replace(/^["']|["']$/g, '');
-      const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
-      let node;
+  function highlightText(phrase) {
+    const container = document.querySelector('.adn .a3s');
+    if (!container || !phrase) return;
 
-      while ((node = walker.nextNode())) {
-        const index = node.nodeValue.indexOf(phrase);
-        if (index !== -1) {
-          const before = node.nodeValue.slice(0, index);
-          const after = node.nodeValue.slice(index + phrase.length);
+    phrase = phrase.trim().replace(/^["']|["']$/g, '');
+    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+    let node;
 
-          const highlight = document.createElement('span');
-          highlight.className = 'scam-highlight';
-          highlight.style.backgroundColor = 'yellow';
-          highlight.style.color = 'black';
-          highlight.textContent = phrase;
+    while ((node = walker.nextNode())) {
+      const index = node.nodeValue.indexOf(phrase);
+      if (index !== -1) {
+        const before = node.nodeValue.slice(0, index);
+        const after = node.nodeValue.slice(index + phrase.length);
 
-          const fragment = document.createDocumentFragment();
-          fragment.appendChild(document.createTextNode(before));
-          fragment.appendChild(highlight);
-          fragment.appendChild(document.createTextNode(after));
-
-          node.parentNode.replaceChild(fragment, node);
-          break;
-        }
-      }
-    }
-
-    function injectPanel(score, reason, highlight) {
-      if (document.getElementById('scam-detector-panel')) return;
-
-      const panel = document.createElement('div');
-      panel.id = 'scam-detector-panel';
-      Object.assign(panel.style, {
-        position: 'fixed',
-        bottom: '20px',
-        right: '20px',
-        backgroundColor: getRiskColor(score),
-        color: 'white',
-        padding: '14px 18px',
-        borderRadius: '10px',
-        zIndex: '9999',
-        maxWidth: '80vw',
-        minWidth: '240px',
-        fontSize: '15px',
-        fontFamily: 'Arial, sans-serif',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px'
-      });
-
-      const label = document.createElement('div');
-      label.innerText = `📊 Scam Score: ${score}/100`;
-
-      const desc = document.createElement('div');
-      desc.innerText = reason;
-      desc.style.fontSize = '13px';
-      desc.style.opacity = '0.9';
-
-      let highlightDisplay;
-
-      if (highlight != "None") {
-        highlightDisplay = document.createElement('div');
-        highlightDisplay.innerText = `⚠️ ${highlight}`;
-        Object.assign(highlightDisplay.style, {
-          backgroundColor: 'yellow',
-          color: 'black',
-          padding: '4px 8px',
-          borderRadius: '6px',
-          fontSize: '13px',
-          fontWeight: 'bold'
+        const highlight = document.createElement('span');
+        highlight.className = 'scam-highlight';
+        Object.assign(highlight.style, {
+          backgroundColor: '#fff3b0',
+          color: '#222',
+          fontWeight: 'bold',
+          borderRadius: '4px',
+          padding: '0 2px'
         });
-      }
-      const closeBtn = document.createElement('button');
-      closeBtn.textContent = '✕';
-      Object.assign(closeBtn.style, {
-        alignSelf: 'flex-end',
-        background: 'transparent',
-        border: 'none',
-        color: 'white',
-        fontSize: '18px',
-        cursor: 'pointer'
-      });
+        highlight.textContent = phrase;
 
-      closeBtn.addEventListener('click', () => {
-        panel.remove();
-        document.querySelectorAll('.scam-highlight').forEach(span => {
-          const parent = span.parentNode;
-          parent.replaceChild(document.createTextNode(span.textContent), span);
-          parent.normalize();
-        });
-      });
+        const fragment = document.createDocumentFragment();
+        fragment.appendChild(document.createTextNode(before));
+        fragment.appendChild(highlight);
+        fragment.appendChild(document.createTextNode(after));
 
-      panel.appendChild(label);
-      panel.appendChild(desc);
-      if (highlightDisplay) {
-        panel.appendChild(highlightDisplay);
+        node.parentNode.replaceChild(fragment, node);
+        break;
       }
-      panel.appendChild(closeBtn);
-      document.body.appendChild(panel);
-      log('Panel injected with score:', score);
+    }
+  }
+
+  function injectPanel(score, reason, highlight, emailText) {
+    if (document.getElementById('scam-detector-panel')) return;
+
+    const panel = document.createElement('div');
+    panel.id = 'scam-detector-panel';
+    Object.assign(panel.style, {
+      position: 'fixed',
+      bottom: '20px',
+      right: '20px',
+      backgroundColor: getBackgroundColor(score),
+      border: '1px solid #ccc',
+      padding: '16px',
+      borderRadius: '12px',
+      zIndex: '9999',
+      maxWidth: '320px',
+      boxShadow: '0 8px 18px rgba(0, 0, 0, 0.1)',
+      fontFamily: 'Arial, sans-serif',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px',
+      transition: 'all 0.3s ease-in-out'
+    });
+
+    const label = document.createElement('div');
+    label.innerText = `📊 Scam Score: ${score}/100`;
+    label.style.fontWeight = 'bold';
+
+    const desc = document.createElement('div');
+    desc.innerText = reason;
+    desc.style.fontSize = '14px';
+
+    panel.appendChild(label);
+    panel.appendChild(desc);
+
+    if (highlight && highlight !== "None") {
+      const highlightDisplay = document.createElement('div');
+      highlightDisplay.innerText = `⚠️ Suspicious: ${highlight}`;
+      Object.assign(highlightDisplay.style, {
+        backgroundColor: '#fff3b0',
+        color: '#111',
+        padding: '6px',
+        borderRadius: '6px',
+        fontSize: '13px'
+      });
+      panel.appendChild(highlightDisplay);
     }
 
-    async function tryInject(attempts = 0) {
-      const selectors = [
-        '[role="main"]',
-        '.readingPane',
-        'div[data-message-id]',
-        '[data-test-id="message-view-body-content"]',
-      ];
+    // Show/Hide report form
+    const reportBtn = document.createElement('button');
+    reportBtn.textContent = 'Report this Email';
+    Object.assign(reportBtn.style, {
+      backgroundColor: '#1a73e8',
+      color: 'white',
+      padding: '6px',
+      borderRadius: '6px',
+      border: 'none',
+      fontSize: '14px',
+      cursor: 'pointer'
+    });
 
-      const emailContainer = selectors.map(sel => document.querySelector(sel)).find(el => el && el.innerText && el.innerText.length > 50);
+    const reportForm = document.createElement('div');
+    reportForm.style.display = 'none';
+    reportForm.style.flexDirection = 'column';
+    reportForm.style.gap = '6px';
 
-      if (emailContainer) {
-        const emailText = emailContainer.innerText;
+    const reasonInput = document.createElement('textarea');
+    reasonInput.placeholder = 'Why is this email suspicious?';
+    reasonInput.style.padding = '6px';
+    reasonInput.style.borderRadius = '6px';
+    reasonInput.style.border = '1px solid #ccc';
+    reasonInput.rows = 2;
 
-        try {
-          const res = await fetch('http://127.0.0.1:5000/analyze', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ emailText })
-          });
+    const highlightInput = document.createElement('textarea');
+    highlightInput.placeholder = 'Suspicious sentence(s)...';
+    highlightInput.style.padding = '6px';
+    highlightInput.style.borderRadius = '6px';
+    highlightInput.style.border = '1px solid #ccc';
+    highlightInput.rows = 2;
 
-          const data = await res.json();
-          if (data.error) {
-            console.warn('[ScamDetector] AI error:', data);
-            return;
+    const submitBtn = document.createElement('button');
+    submitBtn.textContent = 'Submit Report';
+    Object.assign(submitBtn.style, {
+      backgroundColor: '#34a853',
+      color: 'white',
+      padding: '6px',
+      borderRadius: '6px',
+      border: 'none',
+      fontWeight: 'bold',
+      cursor: 'pointer'
+    });
+
+    submitBtn.onclick = () => {
+      const reasonVal = reasonInput.value.trim();
+      const highlightVal = highlightInput.value.trim();
+      if (!reasonVal || !highlightVal) {
+        alert("Please fill in both fields.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting...";
+
+      fetch("http://127.0.0.1:5000/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: userEmail,
+          emailText,
+          reason: reasonVal,
+          highlight: highlightVal
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "reported") {
+            submitBtn.textContent = "✅ Reported";
+            submitBtn.style.backgroundColor = "#999";
           }
+        })
+        .catch(err => {
+          console.error("[ScamDetector] Report error:", err);
+          alert("Failed to report.");
+          submitBtn.textContent = "Submit Report";
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+        });
+    };
 
-          injectPanel(data.score, data.reason, data.highlight);
-          //highlightText(data.highlight);
-        } catch (err) {
-          console.error('[ScamDetector] Analysis failed:', err);
-        }
-      } else if (attempts < 10) {
-        setTimeout(() => tryInject(attempts + 1), 500);
-      } else {
-        log('Email content not found.');
-      }
-    }
+    reportForm.appendChild(reasonInput);
+    reportForm.appendChild(highlightInput);
+    reportForm.appendChild(submitBtn);
+    panel.appendChild(reportBtn);
+    panel.appendChild(reportForm);
 
-    function removePanel() {
-      const existing = document.getElementById('scam-detector-panel');
-      if (existing) existing.remove();
+    reportBtn.onclick = () => {
+      reportBtn.style.display = 'none';
+      reportForm.style.display = 'flex';
+    };
+
+    const closeBtn = document.createElement('span');
+    closeBtn.textContent = '×';
+    Object.assign(closeBtn.style, {
+      alignSelf: 'flex-end',
+      cursor: 'pointer',
+      fontWeight: 'bold',
+      fontSize: '18px',
+      color: '#444'
+    });
+    closeBtn.onclick = () => {
+      panel.remove();
       document.querySelectorAll('.scam-highlight').forEach(span => {
         const parent = span.parentNode;
         parent.replaceChild(document.createTextNode(span.textContent), span);
         parent.normalize();
       });
+    };
+
+    panel.appendChild(closeBtn);
+    document.body.appendChild(panel);
+    log("Injected panel with score:", score);
+  }
+
+  async function tryInject(attempts = 0) {
+    const selectors = [
+      '[role="main"]',
+      '.readingPane',
+      'div[data-message-id]',
+      '[data-test-id="message-view-body-content"]',
+    ];
+    const emailContainer = selectors.map(sel => document.querySelector(sel))
+      .find(el => el && el.innerText && el.innerText.length > 50);
+
+    if (!emailContainer) {
+      if (attempts < 10) return setTimeout(() => tryInject(attempts + 1), 500);
+      return log("Email content not found.");
     }
 
-    setInterval(() => {
-      const newURL = location.href;
-      if (newURL !== currentURL) {
-        currentURL = newURL;
-        log('URL changed:', newURL);
-        removePanel();
-        if (isEmailView(newURL)) {
-          tryInject();
-        }
+    const emailText = emailContainer.innerText;
+
+    try {
+      const res = await fetch('http://127.0.0.1:5000/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emailText, email: userEmail })
+      });
+
+      const data = await res.json();
+      if (data.error) return log("AI error:", data.error);
+      injectPanel(data.score, data.reason, data.highlight, emailText);
+    } catch (err) {
+      console.error('[ScamDetector] Analysis failed:', err);
+    }
+  }
+
+  function removePanel() {
+    const panel = document.getElementById('scam-detector-panel');
+    if (panel) panel.remove();
+
+    document.querySelectorAll('.scam-highlight').forEach(span => {
+      const parent = span.parentNode;
+      parent.replaceChild(document.createTextNode(span.textContent), span);
+      parent.normalize();
+    });
+  }
+
+  setInterval(() => {
+    const newURL = location.href;
+    if (newURL !== currentURL) {
+      currentURL = newURL;
+      log('URL changed:', newURL);
+      removePanel();
+      if (isEmailView(newURL)) {
+        tryInject();
       }
-    }, 1000);
-
-    if (isEmailView(currentURL)) {
-      tryInject();
     }
-  })();
+  }, 1000);
+
+  if (isEmailView(currentURL)) {
+    tryInject();
+  }
 });

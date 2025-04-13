@@ -6,7 +6,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         return;
       }
 
-      // Fetch user info from Google APIs
       fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
         headers: {
           Authorization: `Bearer ${token}`
