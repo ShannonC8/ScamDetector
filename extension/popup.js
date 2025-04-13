@@ -1,11 +1,9 @@
 // Handles login request
 document.getElementById('loginBtn')?.addEventListener('click', () => {
     chrome.runtime.sendMessage({ type: 'LOGIN_WITH_GOOGLE' }, () => {
-      // After sending login message, immediately show a loading message
       document.getElementById('loginBtn').textContent = 'Signing in...';
       document.getElementById('loginBtn').disabled = true;
 
-      // Periodically check for login completion and refresh UI
       const checkInterval = setInterval(() => {
         chrome.storage.local.get(['email'], (result) => {
           if (result.email) {
@@ -13,7 +11,7 @@ document.getElementById('loginBtn')?.addEventListener('click', () => {
             refreshUI();
           }
         });
-      }, 500); // check every 500ms
+      }, 500); 
     });
   });
   
@@ -39,8 +37,8 @@ document.getElementById('loginBtn')?.addEventListener('click', () => {
   }
   
   
-  // Allow user to logout
   document.getElementById('logoutBtn')?.addEventListener('click', () => {
+
     chrome.identity.getAuthToken({ interactive: false }, (token) => {
       if (token) {
         revokeToken(token).finally(() => {
@@ -51,7 +49,6 @@ document.getElementById('loginBtn')?.addEventListener('click', () => {
           });
         });
       } else {
-        // No token to revoke
         chrome.storage.local.remove(['email', 'name', 'picture'], () => {
           refreshUI();
         });
