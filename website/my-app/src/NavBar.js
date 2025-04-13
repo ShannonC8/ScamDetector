@@ -12,6 +12,7 @@ function NavBar() {
         <Link to="/stats">Stats</Link>
         <Link to="/scamhelp">Help</Link>
         <Link to="/contact">Contact Us</Link>
+        <Link to="/quiz">Quiz!</Link>
         <Link to="/">Logout</Link>
       </div>
     </nav>
