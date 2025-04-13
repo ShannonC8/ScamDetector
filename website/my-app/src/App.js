@@ -1,23 +1,33 @@
-import logo from './logo.svg';
+import React from "react";
+import { GoogleLogin } from "@react-oauth/google";
+// import jwt_decode from "jwt-decode";
 import './App.css';
+import { useNavigate, Link } from "react-router-dom";
 
 function App() {
+  const navigate = useNavigate();
+
+  const handleLoginSuccess = (credentialResponse) => {
+    const { credential } = credentialResponse;
+    // const userInfo = jwt_decode(credential);
+    // console.log("User Info:", userInfo);
+    localStorage.setItem("token", credential);
+    navigate("/home");
+  };
+
+  const handleLoginError = () => {
+    console.log("Google Login Failed");
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="centerCard">
+      <div className="card">
+        <p className="title">Sign In</p>
+        <GoogleLogin
+          onSuccess={handleLoginSuccess}
+          onError={handleLoginError}
+        />
+      </div>
     </div>
   );
 }
