@@ -1,13 +1,12 @@
 .contact-subtitle2 {
     text-align: left;
-    font-size: 2rem;
+    font-size: 1.5rem;
 }
 
 .contact-title4 {
-    font-size: 4rem;
+    font-size: 2.5rem;
     text-align: left;
     color: #3083c4;
-
 }
 
 .welcome {
@@ -19,14 +18,12 @@
     justify-content: center;
     gap: 3rem;
     padding-left: 3vw;
-    /* space between buttons */
     margin: 2rem 0;
 }
 
 .button-container button {
     padding: 1.5vw 7vw;
-    /* increased horizontal padding */
-    font-size: 1.5rem;
+    font-size: 1rem;
 }
 
 /* .welcome-image img{
@@ -39,6 +36,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 2rem;
+    height: 40vh;
     padding-left: 15vw;
     padding-right: 15vw;
     padding-top: 8vw;
