@@ -39,8 +39,6 @@ function NavBar() {
       </div>
       <div className="nav-links">
         <Link to="/contact">Contact Us</Link>
-        <Link to="/quiz">Quiz!</Link>
-
         {profilePic && (
           <img
             src={profilePic}
