@@ -64,7 +64,6 @@ const Stats = () => {
     <div>
       <NavBar />
     <div className="stats-container">
-      
       <motion.h2 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         Scam Detection Dashboard
       </motion.h2>
