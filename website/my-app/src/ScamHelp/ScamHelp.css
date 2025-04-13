@@ -105,7 +105,7 @@ body {
   .popup-content {
     overflow-y: auto;
     flex-grow: 1;
-    width: 80vw;
+    width: 40vw;
     font-size: 15px;
     line-height: 1.6;
     color: #333;
