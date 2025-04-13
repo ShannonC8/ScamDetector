@@ -1,0 +1,29 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4vh 4vh;
+    background-color: #caebee;
+    color: black;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+  
+  .nav-brand a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: black;
+    ;
+    text-decoration: none;
+  }
+  
+  .nav-links a {
+    margin-left: 1.5rem;
+    color: black;
+    text-decoration: none;
+    font-size: 1rem;
+  }
+  
+  .nav-links a:hover {
+    text-decoration: underline;
+  }
+  
