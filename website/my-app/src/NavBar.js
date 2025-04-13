@@ -9,9 +9,10 @@ function NavBar() {
         <Link to="/">🐟 PhishNet</Link>
       </div>
       <div className="nav-links">
-        <Link to="/help">Help</Link>
         <Link to="/stats">Stats</Link>
+        <Link to="/scamhelp">Help</Link>
         <Link to="/resources">Resources</Link>
+        <Link to="/">Logout</Link>
       </div>
     </nav>
   );

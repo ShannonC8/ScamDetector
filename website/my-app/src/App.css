@@ -4,7 +4,7 @@
   padding-top: 0vw;
   padding-bottom: 0vw;
   border-radius: 10px 10px 0 0;
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 .centerCard {
@@ -13,7 +13,7 @@
   align-items: center;      /* Vertical center */
   width: 100vw;
   height: 100vh;            /* Full viewport height */
-  background-color: #f7f7f7;
+  background-color: #cde4f5;
 }
 
 .card {

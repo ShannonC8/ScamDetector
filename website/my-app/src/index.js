@@ -4,6 +4,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import Home from './home';
+import Stats from './Stats';
+import ScamHelp from './ScamHelp/ScamHelp';
+import Resources from './Resources';
 
 import reportWebVitals from './reportWebVitals';
 
@@ -18,6 +21,9 @@ root.render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/stats" element={<Stats />} />
+        <Route path="/scamhelp" element={<ScamHelp />} />
+        <Route path="/resources" element={<Resources />} />
       </Routes>
     </BrowserRouter>
   </GoogleOAuthProvider>,

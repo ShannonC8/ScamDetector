@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import './ScamHelp.css';
+import NavBar from "./../NavBar";
 
 import UnitedStatesInfo from './country-content/UnitedStatesInfo';
 import CanadaInfo from './country-content/CanadaInfo';
@@ -30,6 +31,7 @@ export default function ScamHelp() {
 
   return (
     <div className="container">
+      <NavBar />
       <h1 className="title">Phishnet - What To Do If You've Been Scammed</h1>
       <p className="subtitle">Choose your country for reporting and recovery information.</p>
 
@@ -53,13 +55,13 @@ export default function ScamHelp() {
       <Popup open={open} closeOnDocumentClick onClose={() => setOpen(false)} modal
         overlayStyle={{ background: 'rgba(0, 0, 0, 0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
         contentStyle={{
-            padding: 0,
-            border: 'none',
-            background: 'transparent',
-            boxShadow: 'none',
-            maxWidth: '100%',
-            display: 'flex',
-            justifyContent: 'center'
+          padding: 0,
+          border: 'none',
+          background: 'transparent',
+          boxShadow: 'none',
+          maxWidth: '100%',
+          display: 'flex',
+          justifyContent: 'center'
         }}>
         <div className="popup-modal">
           <div className="popup-header">Phishnet - Scam Help</div>
