@@ -20,7 +20,7 @@ chrome.storage.local.get(['email'], (result) => {
     }
 
     function highlightText(phrase) {
-      const container = document.querySelector('[role="main"]');
+      const container = document.querySelector('.adn .a3s');
       if (!container || !phrase) return;
 
       phrase = phrase.trim().replace(/^["']|["']$/g, '');
@@ -50,7 +50,7 @@ chrome.storage.local.get(['email'], (result) => {
       }
     }
 
-    function injectPanel(score, reason) {
+    function injectPanel(score, reason, highlight) {
       if (document.getElementById('scam-detector-panel')) return;
 
       const panel = document.createElement('div');
@@ -82,6 +82,20 @@ chrome.storage.local.get(['email'], (result) => {
       desc.style.fontSize = '13px';
       desc.style.opacity = '0.9';
 
+      let highlightDisplay;
+
+      if (highlight != "None") {
+        highlightDisplay = document.createElement('div');
+        highlightDisplay.innerText = `⚠️ ${highlight}`;
+        Object.assign(highlightDisplay.style, {
+          backgroundColor: 'yellow',
+          color: 'black',
+          padding: '4px 8px',
+          borderRadius: '6px',
+          fontSize: '13px',
+          fontWeight: 'bold'
+        });
+      }
       const closeBtn = document.createElement('button');
       closeBtn.textContent = '✕';
       Object.assign(closeBtn.style, {
@@ -104,6 +118,9 @@ chrome.storage.local.get(['email'], (result) => {
 
       panel.appendChild(label);
       panel.appendChild(desc);
+      if (highlightDisplay) {
+        panel.appendChild(highlightDisplay);
+      }
       panel.appendChild(closeBtn);
       document.body.appendChild(panel);
       log('Panel injected with score:', score);
@@ -135,8 +152,8 @@ chrome.storage.local.get(['email'], (result) => {
             return;
           }
 
-          injectPanel(data.score, data.reason);
-          highlightText(data.highlight);
+          injectPanel(data.score, data.reason, data.highlight);
+          //highlightText(data.highlight);
         } catch (err) {
           console.error('[ScamDetector] Analysis failed:', err);
         }
