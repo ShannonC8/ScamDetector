@@ -3,6 +3,7 @@ from flask_cors import CORS
 import openai
 import os
 import re
+import requests
 import firebase_admin
 from firebase_admin import credentials, auth, firestore
 import json
@@ -92,17 +93,26 @@ def report_scam():
                 "scams_reported": firestore.Increment(1),
                 "report_history": firestore.ArrayUnion([timestamp])
             })
-
+        
+        docs = db.collection("reported_examples").stream()
+        count = sum(1 for _ in docs)
+        if count > 10000:
+            try:
+                requests.post("http://127.0.0.1:5000/train-now")
+            except Exception as e:
+                 print("⚠️ Failed to trigger training:", e)
 
         return jsonify({"status": "reported"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route("/train-now", methods=["POST"])
 def train_now():
     try:
         examples_ref = db.collection("reported_examples").stream()
         examples = [{"prompt": doc.to_dict().get("prompt", ""), "completion": doc.to_dict().get("completion", "")} for doc in examples_ref]
+        
         if not examples:
             return jsonify({"error": "No examples found in Firebase"}), 400
 
@@ -110,11 +120,14 @@ def train_now():
         with open(jsonl_path, "w") as f:
             for ex in examples:
                 f.write(json.dumps({"prompt": ex["prompt"] + "\n", "completion": " " + ex["completion"] + "\n"}) + "\n")
-
         uploaded_file = openai.File.create(
             file=open(jsonl_path, "rb"),
             purpose="fine-tune"
         )
+        batch = db.batch()
+        for doc in db.collection("reported_examples").stream():
+            batch.delete(doc.reference)
+        batch.commit()
 
         fine_tune_job = openai.FineTuningJob.create(
             training_file=uploaded_file["id"],
@@ -135,6 +148,7 @@ def train_now():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route("/analyze", methods=["POST"])
 def analyze_email():
     data = request.json
@@ -151,8 +165,7 @@ def analyze_email():
     except Exception as e:
         print("⚠️ Could not fetch fine-tuned model ID. Using default:", e)
         model_name = 'gpt-3.5-turbo'
-   
-   
+     
     messages = [
         {
             "role": "system",
