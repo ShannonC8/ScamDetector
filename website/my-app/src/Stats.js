@@ -76,7 +76,7 @@ const Stats = () => {
       <motion.h2 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         Scam Detection Dashboard
       </motion.h2>
-
+      
       <motion.div className="stats-cards" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.2 } }}>
         <div className="card green"><h3>{analyzed}</h3><p>Emails Analyzed</p></div>
         <div className="card red"><h3>{scams}</h3><p>Scams Detected</p></div>
