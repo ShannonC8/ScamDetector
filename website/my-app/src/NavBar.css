@@ -26,4 +26,65 @@
   .nav-links a:hover {
     text-decoration: underline;
   }
+
+  .profile-wrapper {
+    position: relative;
+    margin-left: 12px;
+  }
+
+  .profile-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-left: 12px;
+    object-fit: cover;
+    border: 2px solid #ccc;
+    vertical-align: middle;
+  }
+
+  /* White floating dropdown */
+.profile-dropdown {
+  position: absolute;
+  top: 72px; /* Adjust based on your nav height */
+  right: 4vh;
+  background-color: white;
+  border: 1px solid #dadce0;
+  border-radius: 20px;
+  padding: 12px;
+  width: 220px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  text-align: center;
+}
+
+.profile-dropdown-pic {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #dadce0;
+  margin-top: 8px;
+}
+
+.profile-email{
+  font-size: 12px;
+}
+
+.profile-greeting {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.signout-link {
+  display: inline-block;
+  margin-top: 4px;
+  color: #1a73e8;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.signout-link:hover {
+  text-decoration: underline;
+}
+ 
   
