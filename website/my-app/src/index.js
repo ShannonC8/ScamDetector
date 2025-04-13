@@ -6,7 +6,7 @@ import App from './App';
 import Home from './home';
 import Stats from './Stats';
 import ScamHelp from './ScamHelp/ScamHelp';
-import Resources from './Resources';
+import Contact from './Contact';
 
 import reportWebVitals from './reportWebVitals';
 
@@ -23,7 +23,7 @@ root.render(
         <Route path="/home" element={<Home />} />
         <Route path="/stats" element={<Stats />} />
         <Route path="/scamhelp" element={<ScamHelp />} />
-        <Route path="/resources" element={<Resources />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </BrowserRouter>
   </GoogleOAuthProvider>,
