@@ -5,12 +5,19 @@ chrome.storage.local.get(['email'], (result) => {
   let currentURL = location.href;
   let lastEmailText = '';
 
-  const getEmailContainer = () => document.querySelector('.adn .a3s');
+  const getEmailContainer = () => {
+    // Gmail
+    const gmail = document.querySelector('.adn .a3s');
+    if (gmail && gmail.innerText.length > 50) return gmail;
 
-  const isViewingEmail = () => {
-    const container = getEmailContainer();
-    return !!container && container.innerText.trim().length > 50;
+    // Outlook
+    const outlook = document.querySelector('[data-app-section="MailReadCompose"]');
+    if (outlook && outlook.innerText.length > 50) return outlook;
+
+    return null;
   };
+
+  const isViewingEmail = () => !!getEmailContainer();
 
   const getBackgroundColor = (score) => {
     if (score >= 80) return '#ffeaea';   // red
@@ -103,7 +110,7 @@ chrome.storage.local.get(['email'], (result) => {
 
     document.body.appendChild(panel);
 
-    // Controls
+    // Report logic
     document.getElementById('close-btn').onclick = removePanel;
     document.getElementById('report-btn').onclick = () => {
       document.getElementById('report-btn').style.display = 'none';
