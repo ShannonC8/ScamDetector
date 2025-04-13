@@ -86,8 +86,16 @@ function Quiz() {
 
   if (completed) {
     return (
+      <div>
+      <NavBar />
       <div className="quiz-container">
-        <h2>🎉 You've completed the quiz!</h2>
+        <h1>🎉 You've completed the quiz!</h1>
+        <p style={{ fontSize: '14px', marginTop: '10px' }}>
+        <a href="/home" className="home-link">
+          🏠 Go back home
+        </a>
+      </p>
+      </div>
       </div>
     );
   }
